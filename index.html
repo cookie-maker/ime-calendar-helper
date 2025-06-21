@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/2.0.0/encoding.min.js"></script>
     <title>カレンダーの出力</title>
 </head>
 
@@ -98,19 +99,20 @@
             border-radius: 8px;
             padding: 18px 16px 10px 16px;
         }
+
         #description-area summary {
             font-size: 1.08rem;
             color: #338df3;
             font-weight: bold;
             cursor: pointer;
         }
+
         #description-area div {
             margin-top: 12px;
             color: #34495e;
             font-size: 1rem;
             line-height: 1.6;
         }
-
     </style>
     <div class="container">
         <h1>カレンダーヘルパー</h1>
@@ -194,7 +196,14 @@
                 return;
             }
 
-            const blob = new Blob([content], { type: 'text/plain;charset=shift-jis;' });
+            let blob;
+            if (mode === 'ms') {
+                // encoding.jsライブラリを利用してSJISに変換
+                const sjisArray = Encoding.convert(Encoding.stringToCode(content), 'SJIS', 'UNICODE');
+                blob = new Blob([new Uint8Array(sjisArray)], { type: 'text/plain' });
+            } else {
+                blob = new Blob([content], { type: 'text/plain;charset=UTF-8;' });
+            }
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
