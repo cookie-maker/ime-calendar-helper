@@ -223,7 +223,8 @@
             result = '';
             result += `${month}・${day}\t`;
             result += `${year}/${month.padStart(2, "0")}/${day.padStart(2, "0")}(${dayOfWeek})\t`;
-            result += getModeText(mode);
+            result += `${getModeText(mode)}\t`;
+            result += `${year}年`;
             result += `\n`;
             return result;
         };
@@ -237,7 +238,8 @@
             result = '';
             result += `${month}・${day}\t`;
             result += `${month.padStart(2, "0")}/${day.padStart(2, "0")}(${dayOfWeek})\t`;
-            result += getModeText(mode);
+            result += `${getModeText(mode)}\t`;
+            result += `${year}年`;
             result += `\n`;
             return result;
         };
@@ -251,7 +253,8 @@
             result = '';
             result += `${month}・${day}\t`;
             result += `${year}/${month}/${day}(${dayOfWeek})\t`;
-            result += getModeText(mode);
+            result += `${getModeText(mode)}\t`;
+            result += `${year}年`;
             result += `\n`;
             return result;
         };
@@ -265,7 +268,8 @@
             result = '';
             result += `${month}・${day}\t`;
             result += `${month}/${day}(${dayOfWeek})\t`;
-            result += getModeText(mode);
+            result += `${getModeText(mode)}\t`;
+            result += `${year}年`;
             result += `\n`;
             return result;
         };
