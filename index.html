@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カレンダーの出力</title>
+</head>
+
+<body>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Meiryo', sans-serif;
+            background: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 32px 28px 24px 28px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3a4b;
+            margin-bottom: 28px;
+            font-size: 1.4rem;
+            letter-spacing: 0.05em;
+        }
+
+        .mode-group,
+        .style-group {
+            background: #f0f4fa;
+            border: 1.5px solid #e0e6ef;
+            border-radius: 8px;
+            padding: 18px 16px 10px 16px;
+            margin-bottom: 22px;
+            box-sizing: border-box;
+        }
+
+        .mode-group legend,
+        .style-group legend {
+            font-size: 1.08rem;
+            color: #4f8cff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 0 6px;
+        }
+
+        .mode label,
+        .style label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            padding-left: 28px;
+            position: relative;
+            color: #34495e;
+        }
+
+        .mode input[type="radio"],
+        .style input[type="checkbox"] {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            accent-color: #4f8cff;
+            width: 18px;
+            height: 18px;
+        }
+
+        #downloadButton {
+            width: 100%;
+            background: linear-gradient(90deg, #4f8cff 0%, #38b6ff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+            box-shadow: 0 2px 6px rgba(79, 140, 255, 0.08);
+        }
+
+        #downloadButton:hover {
+            background: linear-gradient(90deg, #357ae8 0%, #2fa4d7 100%);
+        }
+
+        #description-area {
+            margin-bottom: 22px;
+            background: #fcf2be;
+            border: 1.5px solid #e0e6ef;
+            border-radius: 8px;
+            padding: 18px 16px 10px 16px;
+        }
+        #description-area summary {
+            font-size: 1.08rem;
+            color: #338df3;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #description-area div {
+            margin-top: 12px;
+            color: #34495e;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+    </style>
+    <div class="container">
+        <h1>カレンダーヘルパー</h1>
+        <details id="description-area" open>
+            <summary>ツールの説明</summary>
+            <div>
+                このツールは、1年分の日付リストを様々な形式で出力できるカレンダーヘルパーです。<br>
+                ダウロードされたファイルをそれぞれのユーザー辞書に追加して下さい。
+            </div>
+        </details>
+        <fieldset class="mode-group">
+            <legend>IME選択</legend>
+            <div class="mode">
+                <label>
+                    <input type="radio" value="google" name="IME" id="mode-google" checked>
+                    Google日本語入力
+                </label>
+                <label>
+                    <input type="radio" value="ms" name="IME" id="mode-ms">
+                    マイクロソフトIME
+                </label>
+                <label>
+                    <input type="radio" value="Mac" name="IME" id="mode-mac">
+                    Mac
+                </label>
+            </div>
+        </fieldset>
+        <fieldset class="style-group">
+            <legend>日付形式</legend>
+            <div class="style">
+                <label>
+                    <input type="checkbox" id="style-yyyymd">
+                    2006/1/2(月)
+                </label>
+                <label>
+                    <input type="checkbox" id="style-yyyymmdd">
+                    2006/01/02(月)
+                </label>
+                <label>
+                    <input type="checkbox" id="style-md">
+                    1/2(月)
+                </label>
+                <label>
+                    <input type="checkbox" id="style-mmdd">
+                    01/02(月)
+                </label>
+            </div>
+        </fieldset>
+        <button id="downloadButton">出力</button>
+    </div>
+
+    <script>
+        const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        document.getElementById('downloadButton').addEventListener('click', function () {
+
+            const modeRadio = document.querySelector('input[name="IME"]:checked');
+            const mode = modeRadio ? modeRadio.value : "";
+
+            const today = new Date();
+            const oneYearLater = new Date(today);
+            oneYearLater.setFullYear(today.getFullYear() + 1);
+
+            let content = '';
+            let currentDate = new Date(today);
+
+            currentDate.setDate(currentDate.getDate() + 1);
+            while (currentDate <= oneYearLater) {
+                const year = currentDate.getFullYear();
+                const month = (currentDate.getMonth() + 1).toString();
+                const day = currentDate.getDate().toString().padStart(2, "0");
+                const dayOfWeek = weekdays[currentDate.getDay()];
+
+                if (document.getElementById("style-yyyymmdd").checked) content += yyyymmdd(currentDate, mode);
+                if (document.getElementById("style-mmdd").checked) content += mmdd(currentDate, mode)
+                if (document.getElementById("style-yyyymd").checked) content += yyyymd(currentDate, mode)
+                if (document.getElementById("style-md").checked) content += md(currentDate, mode)
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            if (content === '') {
+                alert('日付形式を選択してください。');
+                return;
+            }
+
+            const blob = new Blob([content], { type: 'text/plain;charset=shift-jis;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'days.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        })
+
+        function yyyymmdd(date, mode) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString();
+            const day = date.getDate().toString();
+            const dayOfWeek = weekdays[date.getDay()];
+
+            result = '';
+            result += `${month}・${day}\t`;
+            result += `${year}/${month.padStart(2, "0")}/${day.padStart(2, "0")}(${dayOfWeek})\t`;
+            result += getModeText(mode);
+            result += `\n`;
+            return result;
+        };
+
+        function mmdd(date, mode) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString();
+            const day = date.getDate().toString();
+            const dayOfWeek = weekdays[date.getDay()];
+
+            result = '';
+            result += `${month}・${day}\t`;
+            result += `${month.padStart(2, "0")}/${day.padStart(2, "0")}(${dayOfWeek})\t`;
+            result += getModeText(mode);
+            result += `\n`;
+            return result;
+        };
+
+        function yyyymd(date, mode) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString();
+            const day = date.getDate().toString();
+            const dayOfWeek = weekdays[date.getDay()];
+
+            result = '';
+            result += `${month}・${day}\t`;
+            result += `${year}/${month}/${day}(${dayOfWeek})\t`;
+            result += getModeText(mode);
+            result += `\n`;
+            return result;
+        };
+
+        function md(date, mode) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString();
+            const day = date.getDate().toString();
+            const dayOfWeek = weekdays[date.getDay()];
+
+            result = '';
+            result += `${month}・${day}\t`;
+            result += `${month}/${day}(${dayOfWeek})\t`;
+            result += getModeText(mode);
+            result += `\n`;
+            return result;
+        };
+
+        function getModeText(mode) {
+            switch (mode) {
+                case 'ms':
+                    return '短縮よみ';
+                case 'google':
+                    return 'サジェストのみ'
+                case 'Mac':
+                    return '無品詞';
+            }
+        }
+
+    </script>
+</body>
+
+</html>
