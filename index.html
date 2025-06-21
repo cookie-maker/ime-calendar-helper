@@ -159,6 +159,10 @@
                     <input type="checkbox" id="style-mmdd">
                     01/02(月)
                 </label>
+                <label>
+                    <input type="checkbox" id="style-wmd">
+                    令和6年1月2日(月)
+                </label>
             </div>
         </fieldset>
         <button id="downloadButton">出力</button>
@@ -189,6 +193,7 @@
                 if (document.getElementById("style-mmdd").checked) content += mmdd(currentDate, mode)
                 if (document.getElementById("style-yyyymd").checked) content += yyyymd(currentDate, mode)
                 if (document.getElementById("style-md").checked) content += md(currentDate, mode)
+                if (document.getElementById("style-wmd").checked) content += ymd_jp(currentDate, mode) 
                 currentDate.setDate(currentDate.getDate() + 1);
             }
             if (content === '') {
@@ -268,6 +273,23 @@
             result = '';
             result += `${month}・${day}\t`;
             result += `${month}/${day}(${dayOfWeek})\t`;
+            result += `${getModeText(mode)}\t`;
+            result += `${year}年`;
+            result += `\n`;
+            return result;
+        };
+
+        function ymd_jp(date, mode) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString();
+            const day = date.getDate().toString();
+            const dayOfWeek = weekdays[date.getDay()];
+
+            const wareki = year - 2018; // 令和に変換する
+
+            result = '';
+            result += `${month}・${day}\t`;
+            result += `令和${wareki}年${month}月${day}日(${dayOfWeek})\t`;
             result += `${getModeText(mode)}\t`;
             result += `${year}年`;
             result += `\n`;
